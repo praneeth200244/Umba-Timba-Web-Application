@@ -1,0 +1,32 @@
+.custom-button {
+  border: 1px solid black;
+  height: 1rem;
+  padding-bottom: 1.5rem;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
+  background-color: rgb(193, 56, 67);
+  border-radius: 4px;
+}
+
+@keyframes show-toast {
+  0% {
+    bottom: -100%;
+  }
+  20% {
+    bottom: 100px;
+  }
+  80% {
+    bottom: 100px;
+  }
+  100% {
+    bottom: -100%;
+  }
+}
+
+.show-notification {
+  position: fixed;
+  bottom: 100%;
+  right: 20px;
+  animation-name: show-toast;
+  animation-duration: 7s;
+}
