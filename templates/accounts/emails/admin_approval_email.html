@@ -1,0 +1,16 @@
+{% autoescape off %}
+
+Hi {{ user.first_name }},
+
+{% if is_approved %}
+Congratulations! Your account has been approved by our admin team. We're thrilled to have you join our marketplace community. Please setup your account profile.
+{% else %}
+We regret to inform you that you do not meet the criteria to list your food menu on our marketplace. We understand this may be disappointing, but we encourage you to review our guidelines and consider reapplying in the future.
+{% endif %}
+
+For more details, please contact our support at umbatimba2324@gmail.com
+
+Regards,
+Admin Team - Umba Timba Online Marketplace
+
+{% endautoescape %}
