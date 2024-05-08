@@ -10,6 +10,10 @@ from vendor.forms import VendorForm
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.core.exceptions import PermissionDenied
 
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+
+
 # Restrict the vendor from accessing the customer page
 def check_for_vendor(user):
     if user.role == 1:
@@ -38,12 +42,17 @@ def registerCustomer(request):
             user.set_password(password)
             user.role = User.CUSTOMER
             user.save()
+            send_verification_email(request, user)
             messages.success(request, "Your account has been registered successfully!. Please check your mail to activate your account")
             return redirect('login')
         else:
             messages.error(request, "Account registration unsuccessful")
-            
-    user_form = UserForm()
+            context = {
+                'user_form': user_form,
+            }
+            return render(request, 'accounts/registerCustomer.html', context)
+    else:
+        user_form = UserForm()
     context = {
         'user_form':user_form,
     }
@@ -83,15 +92,40 @@ def registerVendor(request):
             messages.success(request, "Your account has been registered successfully. Please wait for the approval")
             return redirect('login')
         else:
+            print(user_form.errors)
+            print(vendor_form.errors)
             messages.error(request, "Account registration unsuccessful")
+            context = {
+                'user_form': user_form,
+                'vendor_form': vendor_form,
+            }
+            return render(request, 'accounts/registerVendor.html', context)
+    else:
+        user_form = UserForm()
+        vendor_form = VendorForm()
 
-    user_form = UserForm()
-    vendor_form = VendorForm
     context = {
         'user_form': user_form,
         'vendor_form': vendor_form,
     }
     return render(request, 'accounts/registerVendor.html', context)
+
+def activate(request, uidb64, token):
+    # Activate the user by setting is_active status to True
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except(ValueError, OverflowError, TypeError, User.DoesNotExist):
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Congratulations...!Your account has been activated now. Please login...!")
+        return redirect('myAccount')
+    else:
+        messages.error(request, "Invalid activation link")
+        return redirect('myAccount')
 
 def login(request):
     if request.user.is_authenticated:
