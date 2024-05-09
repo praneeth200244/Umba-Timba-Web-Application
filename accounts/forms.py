@@ -1,5 +1,7 @@
-from django import forms 
-from .models import User
+from django import forms
+
+from accounts.validators import allow_only_images_validator 
+from .models import User, UserProfile
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
@@ -18,3 +20,24 @@ class UserForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Passwords doesn't match!"
             )
+        
+class UserProfileForm(forms.ModelForm):
+    # To apply css class for fields and apply custom validators
+    address = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Start typing....', 'required':'required'}))
+    profile_picture = forms.FileField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}), validators=[allow_only_images_validator])
+    cover_photo = forms.FileField(widget=forms.FileInput(attrs={'class': 'btn btn-info'}), validators=[allow_only_images_validator])
+
+    # To make latitude and longitude fields readonly
+    # latitude = forms.CharField(widget = forms.TextInput(attrs={'readonly': 'readonly'}))
+    # longitude = forms.CharField(widget = forms.TextInput(attrs={'readonly': 'readonly'}))
+
+    class Meta:
+        model = UserProfile
+        fields = ['profile_picture', 'cover_photo', 'address', 'country', 'state', 'city', 'pin_code', 'latitude', 'longitude']
+    
+    # To make latitude and longitude fields readonly (standard approach)
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            if field == 'latitude' or field == 'longitude':
+                self.fields[field].widget.attrs['readonly'] = 'readonly'
