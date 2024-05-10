@@ -1,0 +1,55 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<!-- Main Section Start -->
+<div class="main-section">
+  <!-- LOAD COVER CONTENT HERE -->
+  {% include 'includes/cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- LOAD SIDEBAR HERE -->
+          {% include 'includes/vendor_sidebar.html' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <h5 class="text-uppercase">Build Your Food Menu</h5>
+              <hr />
+              <h6>Add New Category</h6>
+              <!-- RENDER FORM -->
+              <form action="{% url 'add_category' %}" method="post">
+                {% csrf_token %}
+                <div class="form-fields-set">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="field-holder">
+                                <label>Category Name *</label>
+                                {{ category_form.category_name}}
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="field-holder">
+                                <label>Description</label>
+                                {{ category_form.description}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-check"></i>&nbsp;Create</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Main Section End -->
+
+<div class="row" style="float: right">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <!-- LOAD ERROR MESSAGE HERE -->
+    {% include 'includes/alerts.html' %}
+  </div>
+</div>
+{% endblock %}

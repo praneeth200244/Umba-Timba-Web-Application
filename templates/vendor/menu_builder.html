@@ -1,0 +1,55 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<!-- Main Section Start -->
+<div class="main-section">
+  <!-- LOAD COVER CONTENT HERE -->
+  {% include 'includes/cover.html' %}
+  <div class="page-section account-header buyer-logged-in">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+          <!-- LOAD SIDEBAR HERE -->
+          {% include 'includes/vendor_sidebar.html' %}
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          <div class="user-dashboard loader-holder">
+            <div class="user-holder">
+              <h5 class="text-uppercase">Build Your Food Menu</h5>
+              <hr />
+              <h6>Menu Categories</h6>
+              <a href="#" class="btn btn-success float-right m-1"><i class="fa-solid fa-plus"></i> Add Food Item</a>
+              <a href="{% url 'add_category' %}" class="btn btn-secondary float-right m-1"><i class="fa-solid fa-plus"></i> Add Category</a>
+              <br/>
+              <br>
+              <table class="table table-hover table-borderless" style="background-color: whitesmoke;">
+                <tbody>
+                  
+                  {% for category in categories %}
+                    <tr>
+                      <td class="text-left">{{ forloop.counter }}</td>
+                      <td class="text-left">
+                        <a href="{% url 'fooditems_by_category' category.id %}"><p class="mb-0 font-weight-bold">{{ category }}</p>
+                        </a>
+                        <small class="text-muted">{{ category.description }}</small>
+                      </td> <!-- Prints Category name bcz string representation of Category returns category name -->
+                      <td><i class="fa-solid fa-pencil"></i></td>
+                      <td><i class="fa-solid fa-trash text-danger"></i></td>
+                    </tr>
+                  {% endfor %}                 
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Main Section End -->
+
+<div class="row" style="float: right">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <!-- LOAD ERROR MESSAGE HERE -->
+    {% include 'includes/alerts.html' %}
+  </div>
+</div>
+{% endblock %}

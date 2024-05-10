@@ -22,7 +22,7 @@
                 <div class="text">
                   <i class="icon-location"></i>
                   
-                  {% if vendor.user_profile.address_line_1 or vendor.user_profile.address_line_2 %}
+                  {% if vendor.user_profile.address %}
                   <p>{{ vendor.user_profile.address }}</p>
                   {% else %}
                     <p>Add address of your restaurant</p>
