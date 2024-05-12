@@ -139,8 +139,46 @@ def add_food(request):
             print(food_item_form.errors)
     else:
         food_item_form = FoodItemForm()
+        # To show categories added by particular logged in user
+        food_item_form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor_object(request))
 
     context = {
         'food_item_form': food_item_form,
     }
     return render(request, 'vendor/add_food.html', context)
+
+@login_required(login_url='login')
+@user_passes_test(check_for_vendor)
+def edit_food(request, pk=None):
+    food_item = get_object_or_404(FoodItem, pk=pk)
+    if request.method == 'POST':
+        food_item_form = FoodItemForm(request.POST, request.FILES, instance=food_item)
+        if food_item_form.is_valid():
+            new_food_item = food_item_form.save(commit=False)
+            new_food_item.vendor = get_vendor_object(request)
+            new_food_item.slug = slugify(food_item_form.cleaned_data['food_title'])
+            food_item_form.save()
+            messages.success(request, "Food item updated successfully")
+            return redirect('fooditems_by_category', new_food_item.category.id)
+        else:
+            print(food_item_form.errors)
+    else:
+        food_item_form = FoodItemForm(instance=food_item)  # Pass instance here
+        # To show categories added by particular logged in user
+        food_item_form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor_object(request))
+    context = {
+        'food_item_form': food_item_form,
+        'food_item_object': food_item,  # Pass food_item object to access its properties in the template
+    }
+    return render(request, 'vendor/edit_food.html', context)
+
+@login_required(login_url='login')
+@user_passes_test(check_for_vendor)
+def delete_food(request, pk=None):
+    food_item = get_object_or_404(FoodItem, pk=pk)
+    food_item.delete()
+    messages.success(request, "Food item has been deleted successfully")
+    return redirect('fooditems_by_category', food_item.category.id)
+
+
+

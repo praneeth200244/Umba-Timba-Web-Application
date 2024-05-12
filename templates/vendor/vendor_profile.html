@@ -31,7 +31,11 @@
 																		<li class="gal-img">
 																			<div class="drag-list">
 																				<div class="item-thumb">
+																					{% if user_profile.profile_picture %}
 																					<img class="thumbnail" src="{{ user_profile.profile_picture.url }}" alt="Logo">
+																						{% else %}
+																						<p>Upload Logo of your business</p>
+																					{% endif %}
 																				</div>
 																			</div>
 																		</li>
@@ -53,7 +57,13 @@
 																		<li class="gal-img">
 																			<div class="drag-list">
 																				<div class="item-thumb">
+																					
+																					{% if user_profile.cover_photo %}
 																					<img class="thumbnail" src="{{ user_profile.cover_photo.url }}" alt="Cover Photo">
+																						{% else %}
+																						<p>Upload Cover Photo</p>
+																					{% endif %}
+																						
 																				</div>
 																			</div>
 																		</li>
@@ -75,7 +85,13 @@
 																		<li class="gal-img">
 																			<div class="drag-list">
 																				<div class="item-thumb">
+																					
+																					{% if  %}
 																					<img class="thumbnail" src="{{ vendor.vendor_license.url }}" alt="Vendor License">
+																						{% else %}
+																						<p>Upload your business license</p>
+																					{% endif %}
+																						
 																				</div>
 																			</div>
 																		</li>
