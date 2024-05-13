@@ -36,7 +36,9 @@
     <script src="{% static 'js/modernizr.js' %}"></script>
     <script src="{% static 'js/bootstrap.js' %}"></script>
    
-    <script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&loading=async&libraries=places&callback=initAutoComplete" async defer></script>
+   {% if '/profile/' in request.GET %}
+   <script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&loading=async&libraries=places&callback=initAutoComplete" async defer></script>
+   {% endif %}
     
     
 

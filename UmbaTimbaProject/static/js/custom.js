@@ -62,3 +62,99 @@ function OnPlaceChanged() {
     }
   }
 }
+
+
+// ADD TO CART FUNCTIONALITY
+const addToCartButtons = document.querySelectorAll('.add_to_cart');
+addToCartButtons.forEach(addToCartButton => {
+  addToCartButton.addEventListener('click', (event) => {
+    event.preventDefault();
+  
+    // Extracting data URL
+    const url = addToCartButton.getAttribute('data-url');
+    const food_id = addToCartButton.getAttribute('data-id');
+    
+    // Sending request to Django backend
+    fetch(url, {
+      method: 'GET', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Handle response data as needed
+      // alert(data.message);
+      if (data.status != 'Failed') {
+        document.getElementById('cart_counter').innerHTML = data.cart_counter['cart_count']
+        document.getElementById('cart_quantity-' + food_id).innerHTML = data.qty;
+      } else {
+        alert(data.message);
+      }
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+    });
+  });
+});
+
+// Place the cart item quantity on load
+const item_qty_all = document.querySelectorAll('.item_qty');
+item_qty_all.forEach(item_qty=>{
+  let id =  item_qty.getAttribute('id');
+  let quantity =  item_qty.getAttribute('data-qty');
+  document.getElementById(id).textContent = quantity;
+})
+
+
+// REMOVE FROM CART FUNCTIONALITY
+const removeFromCartButtons = document.querySelectorAll('.remove_from_cart');
+removeFromCartButtons.forEach(removeFromCartButton => {
+  removeFromCartButton.addEventListener('click', (event) => {
+    event.preventDefault();
+  
+    // Extracting data URL
+    const url = removeFromCartButton.getAttribute('data-url');
+    const food_id = removeFromCartButton.getAttribute('data-id');
+    
+    // Sending request to Django backend
+    fetch(url, {
+      method: 'GET', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Handle response data as needed
+      // alert(data.message);
+      if (data.status != 'Failed') {
+        document.getElementById('cart_counter').innerHTML = data.cart_counter['cart_count']
+        document.getElementById('cart_quantity-' + food_id).innerHTML = data.qty;
+      } else {
+        alert(data.message);
+      }
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+    });
+  });
+});
+
+// Place the cart item quantity on load
+// const item_qty_all = document.querySelectorAll('.item_qty');
+// item_qty_all.forEach(item_qty=>{
+//   let id =  item_qty.getAttribute('id');
+//   let quantity =  item_qty.getAttribute('data-qty');
+//   document.getElementById(id).textContent = quantity;
+// })
