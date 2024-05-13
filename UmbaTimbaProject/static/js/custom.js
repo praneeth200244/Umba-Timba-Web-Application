@@ -90,12 +90,16 @@ addToCartButtons.forEach(addToCartButton => {
     .then(data => {
       // Handle response data as needed
       // alert(data.message);
-      if (data.status != 'Failed') {
+      if (data.status == 'login_required') {
+        swal(data.message, '', 'info').then(()=>{
+          window.location = '/login';
+        })
+      } else if (data.status == 'Failed') {
+        swal(data.message, '', 'error');
+      } else {
         document.getElementById('cart_counter').innerHTML = data.cart_counter['cart_count']
         document.getElementById('cart_quantity-' + food_id).innerHTML = data.qty;
-      } else {
-        alert(data.message);
-      }
+      } 
     })
     .catch(error => {
       console.error('There was a problem with the fetch operation:', error);
@@ -138,12 +142,16 @@ removeFromCartButtons.forEach(removeFromCartButton => {
     .then(data => {
       // Handle response data as needed
       // alert(data.message);
-      if (data.status != 'Failed') {
+      if (data.status == 'login_required') {
+        swal(data.message, '', 'info').then(()=>{
+          window.location = '/login';
+        })
+      } else if (data.status == 'Failed') {
+        swal(data.message, '', 'error');
+      } else {
         document.getElementById('cart_counter').innerHTML = data.cart_counter['cart_count']
         document.getElementById('cart_quantity-' + food_id).innerHTML = data.qty;
-      } else {
-        alert(data.message);
-      }
+      } 
     })
     .catch(error => {
       console.error('There was a problem with the fetch operation:', error);

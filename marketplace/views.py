@@ -64,7 +64,7 @@ def add_to_cart(request, food_id=None):
                 except:
                     return JsonResponse({'status': 'Failed','message': 'Food item doesn\'t exists...!'})
             else:
-                return JsonResponse({'status': 'Failed','message': 'Please login to your account....!'})
+                return JsonResponse({'status': 'login_required','message': 'Please login to your account....!'})
         else:
             # It's not a Fetch request
             return JsonResponse({'status': 'Failed','message': 'Invalid request type'})
@@ -96,7 +96,7 @@ def remove_from_cart(request, food_id):
                 except:
                     return JsonResponse({'status': 'Failed','message': 'Food item doesn\'t exists...!'})
             else:
-                return JsonResponse({'status': 'Failed','message': 'Please login to your account....!'})
+                return JsonResponse({'status': 'login_required','message': 'Please login to your account....!'})
         else:
             # It's not a Fetch request
             return JsonResponse({'status': 'Failed','message': 'Invalid request type'})
