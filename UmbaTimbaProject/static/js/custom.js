@@ -116,15 +116,15 @@ item_qty_all.forEach(item_qty=>{
 })
 
 
-// REMOVE FROM CART FUNCTIONALITY
-const removeFromCartButtons = document.querySelectorAll('.remove_from_cart');
-removeFromCartButtons.forEach(removeFromCartButton => {
-  removeFromCartButton.addEventListener('click', (event) => {
+// DECREASE CART ITEM FUNCTIONALITY
+const decreaseInCartButtons = document.querySelectorAll('.decrease_in_cart');
+decreaseInCartButtons.forEach(decreaseInCartButton => {
+  decreaseInCartButton.addEventListener('click', (event) => {
     event.preventDefault();
   
     // Extracting data URL
-    const url = removeFromCartButton.getAttribute('data-url');
-    const food_id = removeFromCartButton.getAttribute('data-id');
+    const url = decreaseInCartButton.getAttribute('data-url');
+    const food_id = decreaseInCartButton.getAttribute('data-id');
     
     // Sending request to Django backend
     fetch(url, {
@@ -159,10 +159,58 @@ removeFromCartButtons.forEach(removeFromCartButton => {
   });
 });
 
-// Place the cart item quantity on load
-// const item_qty_all = document.querySelectorAll('.item_qty');
-// item_qty_all.forEach(item_qty=>{
-//   let id =  item_qty.getAttribute('id');
-//   let quantity =  item_qty.getAttribute('data-qty');
-//   document.getElementById(id).textContent = quantity;
-// })
+  
+// REMOVE ITEM FUNCTIONALITY
+const removeFromCartButtons = document.querySelectorAll('.remove_item_from_cart');
+removeFromCartButtons.forEach(removeFromCartButton => {
+  removeFromCartButton.addEventListener('click', (event) => {
+    event.preventDefault();
+  
+    // Extracting data URL
+    const url = removeFromCartButton.getAttribute('data-url');
+    const cart_id = removeFromCartButton.getAttribute('data-id');
+    
+    // Sending request to Django backend
+    fetch(url, {
+      method: 'GET', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Handle response data as needed
+      // alert(data.message);
+      if (data.status == 'Failed') {
+        swal(data.message, '', 'error');
+      } else {
+        document.getElementById('cart_counter').innerHTML = data.cart_counter['cart_count']
+        swal(data.status, data.message, "success")
+        removeItemFromCartZero(0, cart_id);
+        checkForEmptyCart(data.cart_counter['cart_count']);
+      }
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+    });
+  });
+});
+
+// REMOVE ITEM FROM CART IF QUANTITY IS ZERO
+function removeItemFromCartZero(itemQuantity, cart_id) {
+  if (itemQuantity <= 0) {
+    document.getElementById(`cart-item-${cart_id}`).remove();
+  }
+}
+
+// CHECK FOR EMPTY CART TO SHOW MESSAGE
+function checkForEmptyCart(cart_quantity) {
+  if (cart_quantity <= 0) {
+    document.getElementById('empty-cart').style.display = '';
+  }
+}

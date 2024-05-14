@@ -6,6 +6,7 @@ from marketplace.models import Cart
 from menu.models import Category, FoodItem
 from vendor.models import Vendor
 from django.db.models import Prefetch
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def marketplace(request):
@@ -72,7 +73,7 @@ def add_to_cart(request, food_id=None):
         # Handle other types of requests
         return JsonResponse({'status': 'Fialed','message': 'Invalid request method'})
     
-def remove_from_cart(request, food_id):
+def decrease_in_cart(request, food_id):
     if request.method == 'GET':
         # Check if it's a Fetch request by inspecting the Content-Type header
         content_type = request.headers.get('Content-Type', '')
@@ -103,3 +104,25 @@ def remove_from_cart(request, food_id):
     else:
         # Handle other types of requests
         return JsonResponse({'status': 'Fialed','message': 'Invalid request method'})
+
+@login_required(login_url='login')
+def cart(request):
+    cart_items = Cart.objects.filter(user=request.user)
+    context = {
+        'cart_items':cart_items,
+    }
+    return render(request, 'marketplace/cart.html', context)
+
+def remove_item_from_cart(request, cart_id):
+    if request.user.is_authenticated:
+        content_type = request.headers.get('Content-Type', '')
+        if 'application/json' in content_type:
+            try:
+                cart_item = Cart.objects.get(user=request.user, id=cart_id)
+                if cart_item:
+                    cart_item.delete()
+                    return JsonResponse({'status': 'Success','message': 'Cart item deleted', 'cart_counter': get_cart_counter(request) })
+            except:
+                return JsonResponse({'status': 'Failed','message': 'Cart item doesn\'t exists'})
+        else:
+            return JsonResponse({'status': 'Failed','message': 'Invalid request type'})
