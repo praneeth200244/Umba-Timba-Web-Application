@@ -99,6 +99,15 @@ addToCartButtons.forEach(addToCartButton => {
       } else {
         document.getElementById('cart_counter').innerHTML = data.cart_counter['cart_count']
         document.getElementById('cart_quantity-' + food_id).innerHTML = data.qty;
+
+        // Update subtotal, tax and grand total
+        if (window.location.pathname == '/cart/') {
+          applyCartAmounts(
+            data.cart_amount['subtotal'],
+            data.cart_amount['tax'],
+            data.cart_amount['grand_total']
+          );
+        }
       } 
     })
     .catch(error => {
@@ -125,6 +134,7 @@ decreaseInCartButtons.forEach(decreaseInCartButton => {
     // Extracting data URL
     const url = decreaseInCartButton.getAttribute('data-url');
     const food_id = decreaseInCartButton.getAttribute('data-id');
+    const cart_id = decreaseInCartButton.getAttribute('id');
     
     // Sending request to Django backend
     fetch(url, {
@@ -151,6 +161,17 @@ decreaseInCartButtons.forEach(decreaseInCartButton => {
       } else {
         document.getElementById('cart_counter').innerHTML = data.cart_counter['cart_count']
         document.getElementById('cart_quantity-' + food_id).innerHTML = data.qty;
+
+        if (window.location.pathname == '/cart/') {
+          removeItemFromCartZero(data.qty, cart_id);
+          checkForEmptyCart(data.cart_counter['cart_count']);
+          // Update subtotal, tax and grand total
+          applyCartAmounts(
+            data.cart_amount['subtotal'],
+            data.cart_amount['tax'],
+            data.cart_amount['grand_total']
+          );
+        }
       } 
     })
     .catch(error => {
@@ -193,6 +214,15 @@ removeFromCartButtons.forEach(removeFromCartButton => {
         swal(data.status, data.message, "success")
         removeItemFromCartZero(0, cart_id);
         checkForEmptyCart(data.cart_counter['cart_count']);
+
+        if (window.location.pathname == '/cart/') {
+          // Update subtotal, tax and grand total
+          applyCartAmounts(
+            data.cart_amount['subtotal'],
+            data.cart_amount['tax'],
+            data.cart_amount['grand_total']
+          );
+        }
       }
     })
     .catch(error => {
@@ -213,4 +243,11 @@ function checkForEmptyCart(cart_quantity) {
   if (cart_quantity <= 0) {
     document.getElementById('empty-cart').style.display = '';
   }
+}
+
+// APPLY CART AMOUNTS
+function applyCartAmounts(subtotal, tax, grandtotal) {
+  document.querySelector('#subtotal').innerHTML = subtotal;
+  document.querySelector('#tax').innerHTML = tax;
+  document.querySelector('#total').innerHTML = grandtotal;
 }
