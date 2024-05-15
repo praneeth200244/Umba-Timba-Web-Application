@@ -23,12 +23,12 @@
                                             {% if cart_items %}                                               
                                                 {% for item in cart_items %}                                                
                                                 <li id="cart-item-{{item.id}}">
-                                                    <div class="image-holder"> <a href="#"><img src="{{ item.fooditem.image.url }}" alt="Food Image"></a></div>
+                                                    <div class="image-holder"><img src="{{ item.fooditem.image.url }}" alt="Food Image" width="100" height="75" ></div>
                                                     <div class="text-holder">
                                                         <h6>{{ item.fooditem }}</h6>
-                                                        <!-- {% if item.fooditem.description %}
-                                                            <span>{{ item.fooditem.description }}</span>
-                                                        {% endif %} -->
+                                                        {% if item.fooditem.description %}
+                                                            <span style="width: 18rem; text-align: justify;">{{ item.fooditem.description }}</span>
+                                                        {% endif %}
                                                         <a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{ item.fooditem.vendor }}</a>
                                                     </div>
                                                     <div class="price-holder">

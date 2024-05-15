@@ -124,11 +124,11 @@
                                             {% if category.fooditems.all %}                                                
                                             {% for food in category.fooditems.all %}                                                
                                             <li>
-                                                <div class="image-holder"> <a href="#"><img src="{{ food.image.url }}" alt="Food Image"></a></div>
+                                                <div class="image-holder"><img src="{{ food.image.url }}" alt="Food Image" width="100" height="75" ></div>
                                                 <div class="text-holder">
                                                     <h6>{{ food }}</h6>
                                                     {% if food.description %}
-                                                    <span>Butter and crushed garlic, then spread a little over</span>
+                                                    <span style="width: 28rem; text-align: justify;">{{ food.description }}</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="price-holder">

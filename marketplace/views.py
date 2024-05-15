@@ -7,6 +7,7 @@ from menu.models import Category, FoodItem
 from vendor.models import Vendor
 from django.db.models import Prefetch
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 # Create your views here.
 def marketplace(request):
@@ -126,3 +127,23 @@ def remove_item_from_cart(request, cart_id):
                 return JsonResponse({'status': 'Failed','message': 'Cart item doesn\'t exists'})
         else:
             return JsonResponse({'status': 'Failed','message': 'Invalid request type'})
+
+def search(request):
+    if request.method == 'GET':
+        address = request.GET['address']
+        latitude = request.GET['latitude']
+        longitude = request.GET['longitude']
+        radius = request.GET['radius']
+        restaurant_food_name = request.GET['restaurant_food_name']
+
+        # Get vendor ids that has the fooditem searched by user
+        fetch_vendors_by_fooditems = FoodItem.objects.filter(food_title__icontains=restaurant_food_name, is_available=True).values_list('vendor', flat=True)
+        vendors = Vendor.objects.filter(Q(id__in=fetch_vendors_by_fooditems) | Q(vendor_name__icontains=restaurant_food_name, is_approved=True, user__is_active=True)
+)
+        number_of_vendors = vendors.count()
+        context = {
+            'vendors':vendors,
+            'vendor_count':number_of_vendors,
+        }
+        return render(request, 'marketplace/listings.html', context)
+    return HttpResponse('Search Page')

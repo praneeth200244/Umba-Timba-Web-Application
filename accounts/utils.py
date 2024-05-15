@@ -37,3 +37,9 @@ def send_notification_email(mail_subject, email_template, context):
     to_email = context['user'].email
     mail = EmailMessage(mail_subject, message, from_email=from_email, to=[to_email])
     mail.send()
+
+def helper_for_slug(email):
+    local_part = email.split('@')[0]
+    first_letter = local_part[0]
+    last_letter = local_part[-1]
+    return str(first_letter) + str(last_letter)

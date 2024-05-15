@@ -4,7 +4,7 @@ from accounts.forms import UserForm
 from accounts.models import User, UserProfile
 from django.contrib import messages, auth
 
-from accounts.utils import detectUser,send_verification_email
+from accounts.utils import detectUser, helper_for_slug,send_verification_email
 from vendor.forms import VendorForm
 
 from django.contrib.auth.decorators import login_required,user_passes_test
@@ -94,7 +94,7 @@ def registerVendor(request):
             vendor = vendor_form.save(commit=False)
             vendor.user = user
 
-            vendor.vendor_slug = slugify(vendor_form.cleaned_data['vendor_name']) + '-' + str(user.id)
+            vendor.vendor_slug = slugify(vendor_form.cleaned_data['vendor_name']) + '-' + helper_for_slug(user.email)
             vendor.user_profile = UserProfile.objects.get(user=user)
             vendor.save()
 
