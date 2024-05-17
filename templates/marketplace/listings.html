@@ -64,6 +64,10 @@
                                                     
                                             </address>
                                             
+                                            {% if source_location %}
+                                            <span><small><strong>{{vendor.kms}}</strong> km away from {{source_location}}</small></span>
+                                            {% endif %}
+                                            
                                                 
                                         </div>
                                         <div class="list-option">
