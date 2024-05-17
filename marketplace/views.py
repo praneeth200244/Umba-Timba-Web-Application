@@ -158,6 +158,7 @@ def search(request):
 
             for vendor in vendors:
                 vendor.kms = round(vendor.distance.km, 2)
+                
         number_of_vendors = vendors.count()
         context = {
             'vendors':vendors,
