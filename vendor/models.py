@@ -1,6 +1,8 @@
 from django.db import models
 from accounts.models import User, UserProfile
 from accounts.utils import send_notification_email
+from datetime import datetime, time, date
+
 
 # Create your models here.
 class Vendor(models.Model):
@@ -12,6 +14,23 @@ class Vendor(models.Model):
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    def is_open(self):
+        current_date = date.today()
+        week_day = current_date.isoweekday()
+        current_business_hours = OpeningHour.objects.filter(vendor=self, day=week_day)
+        
+        current_time = datetime.now().strftime("%H:%M:%S")
+
+        is_open = False
+        for i in current_business_hours:
+            open_time = str(datetime.strptime(i.from_hour, "%I:%M %p").time())
+            close_time = str(datetime.strptime(i.to_hour, "%I:%M %p").time())
+
+            if open_time <= current_time <= close_time:
+                is_open = True
+                break
+        return is_open
 
     def __str__(self):
         return self.vendor_name
@@ -35,3 +54,29 @@ class Vendor(models.Model):
                     mail_subject = 'We regret to inform you that you do not meet the criteria to list your food menu on our marketplace'
                     send_notification_email(mail_subject, mail_template, context) 
         return super(Vendor, self).save(*args, **kwargs)
+
+DAYS = [
+    (1, ("Monday")),
+    (2, ("Tuesday")),
+    (3, ("Wednesday")),
+    (4, ("Thursday")),
+    (5, ("Friday")),
+    (6, ("Saturday")),
+    (7, ("Sunday")),
+]
+
+HOURS_OF_DAY_24 = [(time(h, m).strftime('%I:%M %p'), time(h, m).strftime('%I:%M %p')) for h in range(0,24) for m in (0,30)]
+
+class OpeningHour(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    day = models.IntegerField(choices=DAYS)
+    from_hour = models.CharField(choices=HOURS_OF_DAY_24, max_length=10, blank=True, null=True)
+    to_hour = models.CharField(choices=HOURS_OF_DAY_24, max_length=10, blank=True, null=True)
+    is_closed = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('day', '-from_hour')
+        unique_together = ('vendor', 'day', 'from_hour', 'to_hour')
+
+    def __str__(self):
+        return self.get_day_display()

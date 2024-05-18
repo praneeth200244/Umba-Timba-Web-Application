@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.forms import UserProfileForm
@@ -5,12 +6,16 @@ from accounts.models import UserProfile
 from accounts.views import check_for_vendor
 from menu.forms import CategoryForm, FoodItemForm
 from menu.models import Category, FoodItem
-from vendor.forms import VendorForm
-from vendor.models import Vendor
+from vendor.forms import OpeningHourForm, VendorForm
+from vendor.models import OpeningHour, Vendor
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.template.defaultfilters import slugify
 from vendor.utils import get_vendor_object
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.db import IntegrityError
 
 
 # Create your views here.
@@ -181,6 +186,65 @@ def delete_food(request, pk=None):
     food_item.delete()
     messages.success(request, "Food item has been deleted successfully")
     return redirect('fooditems_by_category', food_item.category.id)
+
+@login_required(login_url='login')
+@user_passes_test(check_for_vendor)
+def business_hours(request):
+    business_hours_of_vendor_day = OpeningHour.objects.filter(vendor=get_vendor_object(request))
+    business_hours_form = OpeningHourForm()
+
+    context = {
+        'business_hours_of_vendor_day':business_hours_of_vendor_day,
+        'business_hours_form':business_hours_form,
+    }
+    return render(request, 'vendor/business_hours.html', context)
+
+
+@csrf_exempt
+def add_business_hours(request):
+    if request.method == 'POST':
+        content_type = request.headers.get('Content-Type', '')
+        if 'application/json' in content_type:
+            if request.user.is_authenticated:
+                data = json.loads(request.body)
+                day = data.get('day')
+                from_hour = data.get('from_hour')
+                to_hour = data.get('to_hour')
+                is_closed = data.get('is_closed')
+
+                if is_closed == 'True':
+                    from_hour = ""
+                    to_hour = ""
+                try:
+                    new_business_hour = OpeningHour.objects.create(
+                        vendor=get_vendor_object(request),
+                        day=day,
+                        from_hour=from_hour,
+                        to_hour=to_hour,
+                        is_closed=is_closed,
+                    )
+                    if new_business_hour:
+                        week_day = OpeningHour.objects.get(id=new_business_hour.id)
+                        if week_day.is_closed:
+                            response = {'status':'success', 'id':new_business_hour.id, 'day': week_day.get_day_display(), 'is_closed': 'Closed'}
+                        else:
+                            response = {'status':'success', 'id':new_business_hour.id, 'day': week_day.get_day_display(), 'from_hour':new_business_hour.from_hour, 'to_hour':new_business_hour.to_hour}
+
+                    return JsonResponse(response)
+                except IntegrityError as e:
+                    return JsonResponse({'status': 'failed', 'message': 'Already entered'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+    
+def remove_business_hours(request, pk=None):
+    if request.method == 'GET':
+        content_type = request.headers.get('Content-Type', '')
+        if 'application/json' in content_type:
+            if request.user.is_authenticated:
+                business_hour = OpeningHour.objects.get(pk=pk)
+                business_hour.delete()
+                return JsonResponse({'status': 'success', 'id':pk})
+
 
 
 

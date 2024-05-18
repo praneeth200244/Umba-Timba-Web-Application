@@ -27,3 +27,16 @@
   font-size: 0.8rem;
   cursor: pointer;
 }
+
+
+#business_hours select {
+  padding: 5px 10px !important;
+}
+
+.btn-success.add_business_hours_button, #business_hours_remove_button {
+  padding: 0.2rem 0.35rem;
+}
+
+.business_hours_remove_button {
+  cursor: pointer;
+}
