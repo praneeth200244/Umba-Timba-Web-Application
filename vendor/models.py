@@ -22,15 +22,16 @@ class Vendor(models.Model):
         
         current_time = datetime.now().strftime("%H:%M:%S")
 
-        is_open = False
+        is_operational = False
         for i in current_business_hours:
-            open_time = str(datetime.strptime(i.from_hour, "%I:%M %p").time())
-            close_time = str(datetime.strptime(i.to_hour, "%I:%M %p").time())
+            if not i.is_closed:
+                open_time = str(datetime.strptime(i.from_hour, "%I:%M %p").time())
+                close_time = str(datetime.strptime(i.to_hour, "%I:%M %p").time())
 
-            if open_time <= current_time <= close_time:
-                is_open = True
-                break
-        return is_open
+                if open_time <= current_time <= close_time:
+                    is_operational = True
+                    break
+        return is_operational
 
     def __str__(self):
         return self.vendor_name

@@ -104,7 +104,7 @@ addToCartButtons.forEach((addToCartButton) => {
           if (window.location.pathname == "/cart/") {
             applyCartAmounts(
               data.cart_amount["subtotal"],
-              data.cart_amount["tax"],
+              data.cart_amount["tax_dict"],
               data.cart_amount["grand_total"]
             );
           }
@@ -169,7 +169,7 @@ decreaseInCartButtons.forEach((decreaseInCartButton) => {
             // Update subtotal, tax and grand total
             applyCartAmounts(
               data.cart_amount["subtotal"],
-              data.cart_amount["tax"],
+              data.cart_amount["tax_dict"],
               data.cart_amount["grand_total"]
             );
           }
@@ -222,7 +222,7 @@ removeFromCartButtons.forEach((removeFromCartButton) => {
             // Update subtotal, tax and grand total
             applyCartAmounts(
               data.cart_amount["subtotal"],
-              data.cart_amount["tax"],
+              data.cart_amount["tax_dict"],
               data.cart_amount["grand_total"]
             );
           }
@@ -249,9 +249,14 @@ function checkForEmptyCart(cart_quantity) {
 }
 
 // APPLY CART AMOUNTS
-function applyCartAmounts(subtotal, tax, grandtotal) {
+function applyCartAmounts(subtotal, tax_dict, grandtotal) {
   document.querySelector("#subtotal").innerHTML = subtotal;
-  document.querySelector("#tax").innerHTML = tax;
+
+  for (key1 in tax_dict) {
+    for(key2 in tax_dict[key1]) {
+      document.querySelector(`#tax-${key1}`).innerHTML = tax_dict[key1][key2];
+    }
+  }
   document.querySelector("#total").innerHTML = grandtotal;
 }
 
