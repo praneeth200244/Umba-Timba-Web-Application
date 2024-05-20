@@ -28,15 +28,31 @@
   cursor: pointer;
 }
 
-
 #business_hours select {
   padding: 5px 10px !important;
 }
 
-.btn-success.add_business_hours_button, #business_hours_remove_button {
+.btn-success.add_business_hours_button,
+#business_hours_remove_button {
   padding: 0.2rem 0.35rem;
 }
 
 .business_hours_remove_button {
   cursor: pointer;
+}
+
+.payment-method [type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.payment-method [type="radio"] + img {
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.payment-method [type="radio"]:checked + img {
+  outline: 2px solid #ff0000;
 }

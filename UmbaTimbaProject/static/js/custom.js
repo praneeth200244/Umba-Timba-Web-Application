@@ -264,6 +264,7 @@ function applyCartAmounts(subtotal, tax_dict, grandtotal) {
 const addBusinessHoursButton = document.querySelector(
   ".add_business_hours_button"
 );
+
 addBusinessHoursButton.addEventListener("click", (event) => {
   event.preventDefault();
   let day = document.getElementById("id_day").value;
