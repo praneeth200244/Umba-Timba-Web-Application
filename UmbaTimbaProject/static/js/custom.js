@@ -265,83 +265,85 @@ const addBusinessHoursButton = document.querySelector(
   ".add_business_hours_button"
 );
 
-addBusinessHoursButton.addEventListener("click", (event) => {
-  event.preventDefault();
-  let day = document.getElementById("id_day").value;
-  let from_hour = document.getElementById("id_from_hour").value;
-  let to_hour = document.getElementById("id_to_hour").value;
-  let is_closed = document.getElementById("id_is_closed").checked;
-  let csrf_token = document.querySelector(
-    'input[name="csrfmiddlewaretoken"]'
-  ).value;
-  let url = document.querySelector("#add_business_hours_url").value;
-
-  if (is_closed) {
-    is_closed = "True";
-    condition = "day != ''";
-  } else {
-    is_closed = "False";
-    condition = "day != '' && from_hour != '' && to_hour != ''";
-  }
-
-  let data = {
-    day: day,
-    from_hour: from_hour,
-    to_hour: to_hour,
-    is_closed: is_closed,
-  };
-
-  console.log(data);
-
-  if (eval(condition)) {
-    // Sending the data to django backend using fetch API
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrf_token,
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok " + response.statusText);
-        }
-        return response.json();
+if (addBusinessHoursButton) {
+  addBusinessHoursButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    let day = document.getElementById("id_day").value;
+    let from_hour = document.getElementById("id_from_hour").value;
+    let to_hour = document.getElementById("id_to_hour").value;
+    let is_closed = document.getElementById("id_is_closed").checked;
+    let csrf_token = document.querySelector(
+      'input[name="csrfmiddlewaretoken"]'
+    ).value;
+    let url = document.querySelector("#add_business_hours_url").value;
+  
+    if (is_closed) {
+      is_closed = "True";
+      condition = "day != ''";
+    } else {
+      is_closed = "False";
+      condition = "day != '' && from_hour != '' && to_hour != ''";
+    }
+  
+    let data = {
+      day: day,
+      from_hour: from_hour,
+      to_hour: to_hour,
+      is_closed: is_closed,
+    };
+  
+    console.log(data);
+  
+    if (eval(condition)) {
+      // Sending the data to django backend using fetch API
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrf_token,
+        },
+        body: JSON.stringify(data),
       })
-      .then((data) => {
-        if (data.status == "success") {
-          const tbody = document.querySelector(".table_business_hours tbody");
-          const newRow = document.createElement("tr");
-          newRow.setAttribute("id", `day-${data.id}`);
-          const newCell1 = document.createElement("td");
-          newCell1.textContent = data.day;
-          const newCell2 = document.createElement("td");
-          if (data.is_closed) {
-            newCell2.innerHTML = "<b>Closed</b>";
-          } else {
-            newCell2.textContent = `${data.from_hour} - ${data.to_hour}`;
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok " + response.statusText);
           }
-          const newCell3 = document.createElement("td");
-          newCell3.innerHTML = `
-    <button class="btn btn-danger business_hours_remove_button" type="button" onclick="removeBusinessHour(${data.id})">Remove</button>
-`;
-          newRow.appendChild(newCell1);
-          newRow.appendChild(newCell2);
-          newRow.appendChild(newCell3);
-          tbody.appendChild(newRow);
-          document.getElementById("business_hours").reset();
-        } else {
-          swal(data.message, "", "error");
-        }
-      })
-      .catch((error) => {
-        swal(error, "", danger);
-      });
-  } else {
-    swal("Please fill all the fields", "", "info");
-  }
-});
+          return response.json();
+        })
+        .then((data) => {
+          if (data.status == "success") {
+            const tbody = document.querySelector(".table_business_hours tbody");
+            const newRow = document.createElement("tr");
+            newRow.setAttribute("id", `day-${data.id}`);
+            const newCell1 = document.createElement("td");
+            newCell1.textContent = data.day;
+            const newCell2 = document.createElement("td");
+            if (data.is_closed) {
+              newCell2.innerHTML = "<b>Closed</b>";
+            } else {
+              newCell2.textContent = `${data.from_hour} - ${data.to_hour}`;
+            }
+            const newCell3 = document.createElement("td");
+            newCell3.innerHTML = `
+      <button class="btn btn-danger business_hours_remove_button" type="button" onclick="removeBusinessHour(${data.id})">Remove</button>
+  `;
+            newRow.appendChild(newCell1);
+            newRow.appendChild(newCell2);
+            newRow.appendChild(newCell3);
+            tbody.appendChild(newRow);
+            document.getElementById("business_hours").reset();
+          } else {
+            swal(data.message, "", "error");
+          }
+        })
+        .catch((error) => {
+          swal(error, "", danger);
+        });
+    } else {
+      swal("Please fill all the fields", "", "info");
+    }
+  });
+}
 
 // DELETE BUSINESS HOUR
 function removeBusinessHour(item_id) {
