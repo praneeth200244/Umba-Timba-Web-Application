@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="justify-content-center row">
+        <div class="col-md-8">
+            <div class="bg-white p-3">
+                <figure>
+                    <a href="{% url 'home' %}" class="light-logo">
+                      <img
+                        src="{% static 'logo/UmbaTimbaLogo.png'%}"
+                        alt="UmbaTimbaLogo"
+                        width="300"
+                        height="45"
+                      />
+                    </a>
+                  </figure>
+                  <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mt-3 mb-2">Thank you for your order.</h4>
+                    </div>
+                    <div class="col-md-6 float-right">
+                        <p class="mb-0">{{ order.name }}</p>
+                        <p class="mb-0">{{ order.address }}</p>
+                        <p class="mb-0">{{ order.phone_number }}</p>
+                        <p class="mb-0">{{ order.email }}</p>
+                    </div>
+                  </div>
+
+                  <h6>Hello {{order.name}},</h6>
+                  <span>Review your order details below.</span>
+                  <hr>
+                  <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="d-block">Order Date: </span><span class="font-weight-bold">{{ order.created_at }}</span>
+                    </div>
+                    <div>
+                        <span class="d-block">Order Number: </span><span class="font-weight-bold">{{ order.order_number }}</span>
+                    </div>
+                    <div>
+                        <span class="d-block">Payment Method: </span><span class="font-weight-bold">{{ order.payment_method }}</span>
+                    </div>
+                    <div>
+                        <span class="d-block">Transaction ID: </span><span class="font-weight-bold">{{ order.payment.transaction_id }}</span>
+                    </div>
+                  </div>
+                  <hr>
+                  <table class="table">
+                    <tbody>
+                        {% for item in ordered_food  %}
+                            <tr>
+                                <td><a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge badge-warning d-flex align-items-center justify-content-center" style="height: 2rem; font-size: 0.8rem;">{{item.fooditem.vendor.vendor_name}}</a></td>
+                                <td><img src="{{ item.fooditem.image.url }}" alt="Food Image" width="40" ></td>
+                                <td style="line-height: 5px;">
+                                    <b>{{ item.fooditem }} </b>
+                                </td>
+                                <td> {{ item.quantity }} QTY</td>
+                                <td>₹ {{ item.fooditem.price }}</td>
+                            </tr>
+                        {% endfor %}
+                            
+                    </tbody>
+                </table>
+
+                <div class="row mt-5">
+                    <div class="d-flex justify-content-center col-md-6">
+                        <img src="{% static 'images/paid.png' %}" alt="Paid Image" width="200">
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li style="list-style-type: none" class="pl-2 pr-2">
+                              Subtotal
+                              <span class="price float-right">
+                                <span class="currency">₹ </span>
+                                <span id="subtotal">{{ sub_total }}</span>
+                              </span>
+                            </li>
+      
+                            {% for key,value in tax_data.items %} 
+                            {% for i,j in value.items %}
+                            <li style="list-style-type: none" class="pl-2 pr-2">
+                              {{key}} ({{i}}%)
+                              <span class="price float-right">
+                                <span class="currency">₹ </span>
+                                <span id="tax-{{key}}">{{ j }}</span>
+                              </span>
+                            </li>
+                            {% endfor %} 
+                            {% endfor %}
+      
+                            <li
+                              style="list-style-type: none; font-weight: 600"
+                              class="pl-2 pr-2"
+                            >
+                              Total
+                              <span class="price float-right">
+                                <span class="currency">₹ </span>
+                                <span id="total">{{ order.total }}</span>
+                              </span>
+                            </li>
+                            <!-- <a href="{% url 'checkout' %}" class="btn btn-danger p-2 w-100 text-uppercase mt-3">Proceed to checkout</a> -->
+                            
+                          </ul>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="d-block font-weight-bold">Thank you for ordering with us.</span>
+                        <span>Umba Timba Online Marketplace Team</span>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-end">
+                        <p class="d-block font-weight-bold">Need help?</p>
+                        <span>Contact our support: <a href="mailto:umbatimba2324@gmail.com">umbatimba2324@gmail.com</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

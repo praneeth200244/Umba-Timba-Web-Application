@@ -1,0 +1,35 @@
+{% autoescape off %}
+Hi {{user.first_name}},
+
+<h2 class="text-center">Food Items</h2>
+<table>
+    <tbody>
+        {% for item in cart_items  %}
+            <tr>
+                <td><img src="{{ item.fooditem.image.url }}" alt="Food Image" width="40" ></td>
+                <td><b>{{ item.fooditem }}</b></td>
+                <td> {{ item.quantity }} </td>
+                <td>₹ {{ item.fooditem.price }}</td>
+            </tr>
+        {% endfor %}
+            
+    </tbody>
+</table>
+
+Thank you for your order! We're excited to have the opportunity to serve you.
+
+Here are the details of your order:
+- **Order Number**: {{order.order_number}}
+- **Total Amount**: {{order.total}}
+- **Payment Method**: {{order.payment_method}}
+- **Transaction ID**: {{order.payment.transaction_id}}
+- **Ordered Date**: {{order.created_at}}
+
+
+If you have any questions or need further assistance, please don't hesitate to contact our customer service team at umbatimba2324@gmail.com 
+
+Thank you for choosing Umba Timba Online Marketplace. We hope you enjoy your meal!
+
+Best regards,
+The Umba Timba Online Marketplace Team
+{% endautoescape %}

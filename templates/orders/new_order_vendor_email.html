@@ -1,0 +1,21 @@
+{% autoescape off %}
+Hi {{user.first_name}},
+
+
+You have received a new order.
+
+Here are the details of your order:
+- **Order Number**: {{order.order_number}}
+- **Total Amount**: {{order.total}}
+- **Payment Method**: {{order.payment_method}}
+- **Transaction ID**: {{order.payment.transaction_id}}
+- **Ordered Date**: {{order.created_at}}
+
+
+If you have any questions or need further assistance, please don't hesitate to contact our customer service team at umbatimba2324@gmail.com 
+
+Thank you for choosing Umba Timba Online Marketplace. We hope you enjoy your meal!
+
+Best regards,
+The Umba Timba Online Marketplace Team
+{% endautoescape %}
