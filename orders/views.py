@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 
 from accounts.utils import send_notification_email
 from marketplace.context_processors import get_cart_amounts
-from marketplace.models import Cart
+from marketplace.models import Cart, Tax
+from menu.models import FoodItem
 from orders.forms import OrderForm
 from orders.models import Order, OrderedFood, Payment
 from orders.utils import generate_order_number
@@ -18,6 +19,36 @@ def place_order(request):
     cart_items_count = cart_items.count()
     if cart_items_count <= 0:
         return redirect('marketplace')
+    
+    # Get unique vendor IDs
+    vendor_ids = []
+    for i in cart_items:
+        if i.fooditem.vendor.id not in vendor_ids:
+            vendor_ids.append(i.fooditem.vendor.id)
+    
+    tax_objects = Tax.objects.filter(is_active=True)
+    subtotal = 0
+    vendor_ids_dict = {}
+    total_data = {}
+    for item in cart_items:
+        fooditem = FoodItem.objects.get(pk=item.fooditem.id, vendor_id__in=vendor_ids)
+        v_id = fooditem.vendor.id 
+        if v_id in vendor_ids_dict:
+            subtotal = vendor_ids_dict[v_id]
+            subtotal += (fooditem.price * item.quantity)
+            vendor_ids_dict[v_id] = subtotal
+        else:
+            subtotal = (fooditem.price * item.quantity)
+            vendor_ids_dict[v_id] = subtotal
+
+        # Tax data
+        tax_dict = {}
+        for i in tax_objects:
+            tax_type = i.tax_type
+            tax_percentage = i.tax_percentage
+            tax_amount = round((subtotal * tax_percentage) / 100, 2)
+            tax_dict.update({tax_type : { str(tax_percentage): str(tax_amount)}})
+        total_data.update({fooditem.vendor.id : {str(subtotal) : str(tax_dict) }})
     
     subtotal = get_cart_amounts(request)['subtotal']
     final_tax_amount = get_cart_amounts(request)['final_tax_amount']
@@ -42,10 +73,12 @@ def place_order(request):
             order.user = request.user
             order.total = grand_total
             order.tax_data = json.dumps(tax_data)
+            order.total_data = json.dumps(total_data)
             order.total_tax = final_tax_amount
             order.payment_method = request.POST['payment_method']
             order.save()
             order.order_number = generate_order_number(order.id)
+            order.vendors.add(*vendor_ids) # Addding ManyToManyField data '*' is used to recursively add data to the field
             order.save()
             context = {
                 'cart_items':cart_items,

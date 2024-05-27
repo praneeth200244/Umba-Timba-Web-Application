@@ -6,6 +6,7 @@ from accounts.models import UserProfile
 from accounts.views import check_for_vendor
 from menu.forms import CategoryForm, FoodItemForm
 from menu.models import Category, FoodItem
+from orders.models import Order, OrderedFood
 from vendor.forms import OpeningHourForm, VendorForm
 from vendor.models import OpeningHour, Vendor
 from django.contrib import messages
@@ -244,6 +245,28 @@ def remove_business_hours(request, pk=None):
                 business_hour = OpeningHour.objects.get(pk=pk)
                 business_hour.delete()
                 return JsonResponse({'status': 'success', 'id':pk})
+            
+def vendor_order_details(request, order_number):
+    try:
+        order = Order.objects.get(order_number=order_number, is_ordered=True)
+        print(order)
+        ordered_food = OrderedFood.objects.filter(order=order, fooditem__vendor=get_vendor_object(request))
+        print(ordered_food)
+        sub_total = 0
+        for item in ordered_food:
+            sub_total += (item.price * item.quantity)
+        
+        tax_data = json.loads(order.tax_data)
+
+        context = {
+            'order':order,
+            'ordered_food':ordered_food,
+            'sub_total':sub_total,
+            'tax_data':tax_data,
+        }
+        return render(request, 'vendor/vendor_order_details.html', context)
+    except:
+        return redirect('vendorDashboard')
 
 
 
