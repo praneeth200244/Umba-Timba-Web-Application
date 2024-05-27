@@ -5,6 +5,7 @@ from accounts.models import User, UserProfile
 from django.contrib import messages, auth
 
 from accounts.utils import detectUser, helper_for_slug,send_verification_email
+from orders.models import Order
 from vendor.forms import VendorForm
 
 from django.contrib.auth.decorators import login_required,user_passes_test
@@ -228,7 +229,14 @@ def myAccount(request):
 @login_required(login_url='login')
 @user_passes_test(check_for_customer)
 def customerDashboard(request):
-    return render(request, 'accounts/customerDashboard.html')
+    orders = Order.objects.filter(user=request.user, is_ordered=True)
+    recent_orders = orders[:5]
+    context = {
+        'orders':orders,
+        'orders_count':orders.count(),
+        'recent_orders':recent_orders,
+    }
+    return render(request, 'accounts/customerDashboard.html', context)
 
 @login_required(login_url='login')
 @user_passes_test(check_for_vendor)

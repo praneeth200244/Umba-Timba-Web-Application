@@ -100,7 +100,13 @@
                         </span>
                       </li>
                       <!-- <a href="{% url 'checkout' %}" class="btn btn-danger p-2 w-100 text-uppercase mt-3">Proceed to checkout</a> -->
-                      <div id="paypal-button-container" class="mt-2"></div>
+                      
+                      {% if order.payment_method == 'PayPal' %}
+                        <div id="paypal-button-container" class="mt-2"></div>
+                      {% elif order.payment_method == 'RazorPay' %}
+                        
+                      {% endif %}
+                        
                     </ul>
                   </div>
                 </div>
