@@ -30,10 +30,10 @@
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                   <div class="card">
                     <div class="card-header">
-                      Total Reveniew
+                      Total Revenue
                     </div>
                     <div class="card-body text-center">
-                      <a href="#"><h5 class="card-title">$12345</h5></a>
+                      <a href="#"><h5 class="card-title">₹ {{total_revenue | floatformat:2 }}</h5></a>
                     </div>
                   </div>
                 </div>
@@ -43,7 +43,7 @@
                       This Month
                     </div>
                     <div class="card-body text-center">
-                      <a href="#"><h5 class="card-title">$12345</h5></a>
+                      <a href="#"><h5 class="card-title">₹{{ current_month_revenue | floatformat:2}}</h5></a>
                     </div>
                   </div>
                 </div>
@@ -73,7 +73,7 @@
                             <tr>
                               <td><b><a href="{% url 'vendor_order_details' order.order_number %}">{{ order.order_number}}</a></b></td>
                               <td>{{order.name}}</td>
-                              <td>₹ {{order.total}}</td>
+                              <td>₹ {{order.get_total_by_vendor.grand_total}}</td>
                               <td>{{order.status}}</td>
                               <td>{{order.created_at}}</td>
                               <td>{{ order.payment_method }}</td>

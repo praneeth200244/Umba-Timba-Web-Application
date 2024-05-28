@@ -59,7 +59,7 @@
                                     </div>
                                   </div>
                                   <hr>
-                                  <table class="table">
+                                  <table class="table" id="ordersTable">
                                     <tbody>
                                         {% for item in ordered_food  %}
                                             <tr>
@@ -109,7 +109,7 @@
                                               Total
                                               <span class="price float-right">
                                                 <span class="currency">₹ </span>
-                                                <span id="total">{{ order.total }}</span>
+                                                <span id="total">{{ grand_total }}</span>
                                               </span>
                                             </li>
                                             <!-- <a href="{% url 'checkout' %}" class="btn btn-danger p-2 w-100 text-uppercase mt-3">Proceed to checkout</a> -->

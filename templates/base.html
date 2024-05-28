@@ -5,7 +5,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FoodOnline</title>
+    <title>Umba Timba</title>
+    <link rel="shortcut icon" href="{% static 'logo/LOGO.png'%}" type="image/x-icon">
     <!-- Google Font Family Link Start -->
     <link
       rel="stylesheet"
@@ -44,6 +45,13 @@
    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>    
    <!-- Include the PayPal JavaScript SDK -->
    <script src="https://www.paypal.com/sdk/js?client-id={{PAYPAL_CLIENT_ID}}&currency=USD"></script>
+
+   <!-- Include Datatables plugin -->
+   <link rel="stylesheet" href="//cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
+   <script src="//cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
+   <script>
+    let table = new DataTable('#ordersTable');
+   </script>
 
     <style>
       body,
